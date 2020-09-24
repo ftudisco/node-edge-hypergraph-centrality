@@ -1,1 +1,1 @@
-# node-edge-hypergraph-centrality
+# Node-edge hypergraph centrality
