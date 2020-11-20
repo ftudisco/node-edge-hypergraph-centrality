@@ -5,7 +5,7 @@ function compute_centrality(B,f,g,ϕ,ψ; maxiter=100,tol=1e-6)
     y0 = ones(m,1)./m
     
     for it in 1:maxiter
-        println("$it ...")
+        if (it%30==0) println("$it ..."); end
         u = g(B*f(y0))
         v = ψ(B'*ϕ(x0))
         x = u./norm(u,1)
@@ -13,6 +13,7 @@ function compute_centrality(B,f,g,ϕ,ψ; maxiter=100,tol=1e-6)
         
         check = norm(x-x0,1) + norm(y-y0)
         if check < tol
+            println("$it ===")
             return vec(x),vec(y)
         else
             x0 = copy(x)
@@ -20,7 +21,7 @@ function compute_centrality(B,f,g,ϕ,ψ; maxiter=100,tol=1e-6)
         end
     end
     println("Warning: Centrality did not converge")
-    return vec(x),vec(y)
+    return vec(x0),vec(y0)
 end
 function compute_centrality(B,W,f,g,ϕ,ψ; maxiter=100,tol=1e-6)
     n,m = size(B)
@@ -30,7 +31,7 @@ function compute_centrality(B,W,f,g,ϕ,ψ; maxiter=100,tol=1e-6)
     y0 = ones(m,1)./m
     
     for it in 1:maxiter
-        println("$it ...")
+        if (it%30==0) println("$it ..."); end
         u = g(B*W*f(y0))
         v = ψ(B'*ϕ(x0))
         x = u./norm(u,1)
@@ -38,6 +39,7 @@ function compute_centrality(B,W,f,g,ϕ,ψ; maxiter=100,tol=1e-6)
         
         check = norm(x-x0,1) + norm(y-y0)
         if check < tol
+            println("$it ===")
             return vec(x),vec(y)
         else
             x0 = copy(x)
@@ -45,7 +47,7 @@ function compute_centrality(B,W,f,g,ϕ,ψ; maxiter=100,tol=1e-6)
         end
     end
     println("Warning: Centrality did not converge")
-    return vec(x),vec(y)
+    return vec(x0),vec(y0)
 end
 function compute_centrality(B,W,N,f,g,ϕ,ψ; maxiter=100,tol=1e-6)
     n,m = size(B)
@@ -56,7 +58,7 @@ function compute_centrality(B,W,N,f,g,ϕ,ψ; maxiter=100,tol=1e-6)
     y0 = ones(m,1)./m
     
     for it in 1:maxiter
-        println("$it ...")
+        if (it%30==0) println("$it ..."); end
         u = g(B*W*f(y0))
         v = ψ(B'*N*ϕ(x0))
         x = u./norm(u,1)
@@ -64,6 +66,7 @@ function compute_centrality(B,W,N,f,g,ϕ,ψ; maxiter=100,tol=1e-6)
         
         check = norm(x-x0,1) + norm(y-y0)
         if check < tol
+            println("$it ===")
             return vec(x),vec(y)
         else
             x0 = copy(x)
@@ -71,5 +74,5 @@ function compute_centrality(B,W,N,f,g,ϕ,ψ; maxiter=100,tol=1e-6)
         end
     end
     println("Warning: Centrality did not converge")
-    return vec(x),vec(y)
+    return vec(x0),vec(y0)
 end    
