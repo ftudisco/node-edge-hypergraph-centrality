@@ -1,6 +1,6 @@
 using LinearAlgebra
 using SparseArrays
-# using PyPlot
+using PyPlot
 using PyCall
 using StatsBase
 wordcloud = pyimport("wordcloud");
@@ -91,24 +91,27 @@ semilogy(vec(1:m)[δδ.==1],yy[δδ.==1],"x")
 
 yy = yy./maximum(yy)
 figure()
-subplot(231); sb.histplot(data=yy[δδ.==1],element="step",stat="probability")
-subplot(232); sb.histplot(data=yy[δδ.==2],element="step",stat="probability") #hist(yy[δδ.==2],bins=50,range=(0,1),density=true)
-subplot(233); sb.histplot(data=yy[δδ.==3],element="step",stat="probability") #hist(yy[δδ.==3],bins=50,range=(0,1),density=true)
-subplot(234); sb.histplot(data=yy[δδ.==5],element="step",stat="probability") #hist(yy[δδ.==4],bins=50,range=(0,1),density=true)
-subplot(235); sb.histplot(data=yy[δδ.==6],element="step",stat="probability") #hist(yy[δδ.==5],bins=50,range=(0,1),density=true)
+subplot(231); ax = sb.histplot(data=yy[δδ.==1],element="step",stat="density"); ax.set_xlim(0, 1);
+subplot(232); ax = sb.histplot(data=yy[δδ.==2],element="step",stat="density"); ax.set_xlim(0, 1);#hist(yy[δδ.==2],bins=50,range=(0,1),density=true)
+subplot(233); ax = sb.histplot(data=yy[δδ.==3],element="step",stat="density"); ax.set_xlim(0, 1); #hist(yy[δδ.==3],bins=50,range=(0,1),density=true)
+subplot(234); ax = sb.histplot(data=yy[δδ.==4],element="step",stat="density"); ax.set_xlim(0, 1); #hist(yy[δδ.==4],bins=50,range=(0,1),density=true)
+subplot(235); ax = sb.histplot(data=yy[δδ.==5],element="step",stat="density"); ax.set_xlim(0, 1); #hist(yy[δδ.==5],bins=50,range=(0,1),density=true)
 
 figure()
+subplot(121)
 loglog(w./maximum(w),y./maximum(y),"+")
 xlabel("edge weight")
 ylabel("edge centrality")
-figure()
+subplot(122)
 plot(δ./maximum(δ),y./maximum(y),"+")
-
+xlabel("edge size")
+ylabel("edge centrality")
 
 # print top k edges
 k = 100
 top_k_edges = Dict()
 top_k_edges_all = []
+top_k_edges_all_id =[]
 text = ""
 for e in 1:k
     idx_nodes = findnz(B[:,yid[e]])[1]
@@ -116,6 +119,7 @@ for e in 1:k
     for (i,id) in enumerate(idx_nodes)
         push!(lab_nodes,labels[id])
         push!(top_k_edges_all, labels[id])
+        push!(top_k_edges_all_id, id)
         global text *= labels[id]*", "
     end
     top_k_edges[e] = lab_nodes #Set(findnz(B[:,yid[e]])[1])
@@ -135,3 +139,14 @@ subplot(122)
 a = sb.histplot(data=top_k_edges_all)
 xticks(rotation=90)
 tight_layout()
+
+freq_ids = StatsBase.countmap(top_k_edges_all_id);
+p = sortperm(collect(values(freq_ids)));
+[collect(values(freq_ids))[p] collect(keys(freq_ids))[p] labels[collect(keys(freq_ids))[p]]]
+
+#node centrality ranking vs most popular nodes in highest ranked edges
+figure()
+top_nodes_by_edges = collect(keys(freq_ids))[p];
+m = length(top_nodes_by_edges)
+top_nodes_by_centrality = xid[1:m]
+PyPlot.plot(top_nodes_by_centrality,top_nodes_by_edges,"o")
