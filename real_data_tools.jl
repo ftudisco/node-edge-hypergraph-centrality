@@ -3,17 +3,28 @@ using Combinatorics
 using DelimitedFiles
 
 function read_walmart_data()
-    dubs = Vector{NTuple{2,Int64}}()
-    tris = Vector{NTuple{3,Int64}}()
-    Is = []
-    Js = []
+    edges = Dict()
     open("data/walmart-trips/hyperedges-walmart-trips.txt") do f
         for (e,line) in enumerate(eachline(f))
             nodes = [parse(Int64, v) for v in split(line, ',')]
-            append!(Is,nodes)
-            append!(Js,[e for _ in nodes])
+            edge = Set(nodes)
+            if (edge in keys(edges))
+                edges[edge] = edges[edge]+1
+            else
+                edges[edge] = 1
+            end
         end
     end
+    
+    Is = []
+    Js = []
+    w = []
+    for (e,edge) in enumerate(keys(edges))
+        append!(Is,edge)
+        append!(Js,[e for _ in edge])
+        append!(w,edges[edge])
+    end
+    m = length(w)
 
     labels = Int64[]
     open("data/walmart-trips/node-labels-walmart-trips.txt") do f
@@ -30,7 +41,7 @@ function read_walmart_data()
     end
     
 
-    return sparse(Is,Js,1), labels, label_name
+    return sparse(Is,Js,1),  sparse(1:m,1:m,Float64.(w)), labels, label_name, edges
 end
 
 function read_tags_data(dataset::String)

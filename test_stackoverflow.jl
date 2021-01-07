@@ -28,7 +28,7 @@ for a in αs
         ϕ = x -> x.^b
         ψ = x -> x.^(1/b)
         println("a = $a, b = $b")
-        x,y = compute_centrality(B,W,f,g,ϕ,ψ,maxiter=500);
+        x,y = compute_centrality(B,W,f,g,ϕ,ψ,maxiter=300);
         centralities[(a,b)] = Dict("x"=>x, "y"=>y)
     end
 end
