@@ -41,7 +41,7 @@ function read_walmart_data()
     end
     
 
-    return sparse(Is,Js,1),  sparse(1:m,1:m,Float64.(w)), labels, label_name, edges
+    return sparse(Is,Js,1),  Float64.(w), labels, label_name, edges
 end
 
 function read_tags_data(dataset::String)
@@ -77,7 +77,7 @@ function read_tags_data(dataset::String)
     
     m = length(w)
     
-    return sparse(Is,Js,1), sparse(1:m,1:m,Float64.(w)), edges
+    return sparse(Is,Js,1), Float64.(w), edges
 end
 
 
